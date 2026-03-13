@@ -5,24 +5,30 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 ## 1. What was broken when you started?
 
 - What did the game look like the first time you ran it?
+  A dashboard.
 - List at least two concrete bugs you noticed at the start  
   (for example: "the secret number kept changing" or "the hints were backwards").
-
+  It says to guess a number between 1 and 100, I put 3000, and message back says to "GO HIGHER", which doesn't make sense.
+  It sometimes records previous guesses again within the history when you actually put a different number.
+  Number of attempts does not consisently go down when I am guessing numbers.
 ---
 
 ## 2. How did you use AI as a teammate?
 
-- Which AI tools did you use on this project (for example: ChatGPT, Gemini, Copilot)?
+- Which AI tools did you use on this project (for example: ChatGPT, Gemini, Copilot)?\
+  Copilot
 - Give one example of an AI suggestion that was correct (including what the AI suggested and how you verified the result).
+  Copilot correctly identified that check_guess in app.py was casting the secret to a str on every even-numbered attempt, then falling back to lexicographic string comparison — which is why guessing 3000 returned "Go HIGHER!" instead of "Go LOWER!". Copilot suggested fixing this by always casting both guess and secret to int before comparing inside check_guess in logic_utils.py:38-43. I verified it by running the three pytest tests in test_game_logic.py — test_guess_too_high, test_guess_too_low, and test_winning_guess — all passed after the fix.
 - Give one example of an AI suggestion that was incorrect or misleading (including what the AI suggested and how you verified the result).
-
+  Copilot suggested clearing the text input after a submission by directly assigning st.session_state[guess_input_key] = "" at the end of the if submit: block in app.py. This caused a StreamlitAPIException at runtime because Streamlit forbids mutating a widget's state key after that widget has already been created in the same script run. I discovered it was wrong when the app crashed with a traceback pointing to that exact line. The correct fix was to set a flag instead, then clear the key on the next rerun before st.text_input is instantiated.
 ---
 
 ## 3. Debugging and testing your fixes
 
 - How did you decide whether a bug was really fixed?
-- Describe at least one test you ran (manual or using pytest)  
-  and what it showed you about your code.
+  Running several tests and testing the actual website myself.
+- Describe at least one test you ran (manual or using pytest) and what it showed you about your code.
+
 - Did AI help you design or understand any tests? How?
 
 ---
@@ -30,7 +36,9 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 ## 4. What did you learn about Streamlit and state?
 
 - In your own words, explain why the secret number kept changing in the original app.
+
 - How would you explain Streamlit "reruns" and session state to a friend who has never used Streamlit?
+  
 - What change did you make that finally gave the game a stable secret number?
 
 ---
