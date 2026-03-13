@@ -28,17 +28,17 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 - How did you decide whether a bug was really fixed?
   Running several tests and testing the actual website myself.
 - Describe at least one test you ran (manual or using pytest) and what it showed you about your code.
-
+  I ran pytest tests/test_game_logic.py after refactoring check_guess into logic_utils.py. The tests in test_game_logic.py call check_guess and assert the return value equals "Win", "Too High", or "Too Low" directly — but check_guess returns a tuple like ("Too High", "📉 Go LOWER!"). This showed me the tests were written against a simpler interface contract, meaning either the tests needed updating to check result[0], or the function signature itself needed to match. It exposed a mismatch between the test expectations and the actual implementation that I would not have caught by just running the app.
 - Did AI help you design or understand any tests? How?
-
+  Yes. Copilot explained that the three existing tests each isolate a single code path, equal, greater, and less, which is the correct pattern for unit testing a pure function like check_guess.
 ---
 
 ## 4. What did you learn about Streamlit and state?
 
 - In your own words, explain why the secret number kept changing in the original app.
-
+  In the original app.py, random.randint(low, high) was called at the top level without verifying if a secret was already there, which meant every rerun generated a new random number. The session state guard at "secret" not in st.session_state in app.py:30-31 is what stops that: it only creates a new secret once per session, keeping the stored value intact during all the following reruns.
 - How would you explain Streamlit "reruns" and session state to a friend who has never used Streamlit?
-  
+  In Streamlit, the script reruns from the top on every interaction, and st.session_state is used to store values so they persist instead of resetting each time.
 - What change did you make that finally gave the game a stable secret number?
 
 ---
@@ -47,5 +47,8 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 
 - What is one habit or strategy from this project that you want to reuse in future labs or projects?
   - This could be a testing habit, a prompting strategy, or a way you used Git.
+  Always running unit tests againsts logic.
 - What is one thing you would do differently next time you work with AI on a coding task?
+  Review the code more thoroughly before accepting it.
 - In one or two sentences, describe how this project changed the way you think about AI generated code.
+  AI can accurately figure out small bugs faster but it isn't always aware of constraits or specific requirements, and you need to provide that context, so its important to read and test the code.
